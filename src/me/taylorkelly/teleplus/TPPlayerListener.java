@@ -28,7 +28,8 @@ public class TPPlayerListener extends PlayerListener {
 			if (split.length == 4 && isNumber(split[1]) && isNumber(split[2]) && isNumber(split[3])) {
 				// TODO ChunkLoading
 				World currentWorld = player.getWorld();
-				Location loc = new Location(currentWorld, Double.parseDouble(split[1]), Double.parseDouble(split[2]), Double.parseDouble(split[3]));
+				Location loc = new Location(currentWorld, Double.parseDouble(split[1]), Double.parseDouble(split[2]), Double.parseDouble(split[3]), player
+						.getLocation().getYaw(), player.getLocation().getPitch());
 				Teleporter tp = new Teleporter(loc);
 				tp.addTeleportee(player);
 				tp.teleport();
@@ -41,7 +42,8 @@ public class TPPlayerListener extends PlayerListener {
 					player.sendMessage(Color.RED + "Not a valid world.");
 				} else {
 					World currentWorld = plugin.getServer().getWorlds()[Integer.parseInt(split[1])];
-					Location loc = new Location(currentWorld, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ());
+					Location loc = new Location(currentWorld, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player
+							.getLocation().getYaw(), player.getLocation().getPitch());
 					Teleporter tp = new Teleporter(loc);
 					tp.addTeleportee(player);
 					tp.teleport();
@@ -51,11 +53,30 @@ public class TPPlayerListener extends PlayerListener {
 				 */
 			} else if (split.length == 2 && split[1].equalsIgnoreCase("up")) {
 				int y = player.getWorld().getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ());
-				Location loc = new Location(player.getWorld(), player.getLocation().getX(), y, player.getLocation().getZ());
+				Location loc = new Location(player.getWorld(), player.getLocation().getX(), y, player.getLocation().getZ(), player.getLocation().getYaw(),
+						player.getLocation().getPitch());
 				Teleporter tp = new Teleporter(loc);
 				tp.setVerbose(false);
 				tp.addTeleportee(player);
 				tp.teleport();
+				/**
+				 * /tp jump
+				 */
+			} else if (split.length == 2 && split[1].equalsIgnoreCase("jump")) {
+				AimBlock aiming = new AimBlock(player);
+				if (aiming.getTargetBlock() == null) {
+					player.sendMessage(Color.RED + "Not pointing to valid block");
+				} else {
+					int x = aiming.getTargetBlock().getX();
+					int y = aiming.getTargetBlock().getY() + 1;
+					int z = aiming.getTargetBlock().getZ();
+					World world = aiming.getTargetBlock().getWorld();
+					Location loc = new Location(world, x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
+					Teleporter tp = new Teleporter(loc);
+					tp.setVerbose(false);
+					tp.addTeleportee(player);
+					tp.teleport();
+				}
 				/**
 				 * /tp <player>
 				 */
@@ -63,7 +84,8 @@ public class TPPlayerListener extends PlayerListener {
 				// TODO matchPlayer
 				Player target = plugin.getServer().getPlayer(split[1]);
 				if (target != null) {
-					Location loc = new Location(target.getWorld(), target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ());
+					Location loc = new Location(target.getWorld(), target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ(),
+							target.getLocation().getYaw(), target.getLocation().getPitch());
 					Teleporter tp = new Teleporter(loc);
 					tp.addTeleportee(player);
 					tp.setVerbose(false);
@@ -80,7 +102,8 @@ public class TPPlayerListener extends PlayerListener {
 					player.sendMessage(Color.RED + "Not a valid world.");
 				} else {
 					World currentWorld = plugin.getServer().getWorlds()[Integer.parseInt(split[1])];
-					Location loc = new Location(currentWorld, Double.parseDouble(split[2]), Double.parseDouble(split[3]), Double.parseDouble(split[4]));
+					Location loc = new Location(currentWorld, Double.parseDouble(split[2]), Double.parseDouble(split[3]), Double.parseDouble(split[4]), player
+							.getLocation().getYaw(), player.getLocation().getPitch());
 					Teleporter tp = new Teleporter(loc);
 					tp.addTeleportee(player);
 					tp.teleport();
@@ -89,7 +112,8 @@ public class TPPlayerListener extends PlayerListener {
 				 * /tp here <player1> <player2> <player3>
 				 */
 			} else if (split.length > 2 && split[1].equalsIgnoreCase("here")) {
-				Location loc = new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ());
+				Location loc = new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player
+						.getLocation().getYaw(), player.getLocation().getPitch());
 				Teleporter tp = new Teleporter(loc);
 				tp.setVerbose(false);
 				for (int i = 2; i < split.length; i++) {
@@ -109,7 +133,8 @@ public class TPPlayerListener extends PlayerListener {
 			} else if (split.length > 3 && split[1].equalsIgnoreCase("to")) {
 				Player target = plugin.getServer().getPlayer(split[2]);
 				if (target != null) {
-					Location loc = new Location(target.getWorld(), target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ());
+					Location loc = new Location(target.getWorld(), target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ(),
+							target.getLocation().getYaw(), target.getLocation().getPitch());
 					Teleporter tp = new Teleporter(loc);
 					tp.setVerbose(false);
 					for (int i = 3; i < split.length; i++) {

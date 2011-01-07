@@ -14,7 +14,7 @@ public class TelePlus extends JavaPlugin {
 	private TPPlayerListener playerListener;
 	public static Logger log;
 	public final static String name = "TelePlus";
-	public final static String version = "1.0";
+	public final static String version = "1.1";
 	public TelePlus(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File plugin, ClassLoader cLoader) {
 		super(pluginLoader, instance, desc, plugin, cLoader);
 		// TODO Auto-generated constructor stub

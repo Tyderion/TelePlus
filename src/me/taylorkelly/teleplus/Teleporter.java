@@ -45,7 +45,7 @@ public class Teleporter {
 			}
 		}
 		for (Player player : players)
-			player.teleportTo(new Location(world, x, y, z));
+			player.teleportTo(new Location(world, x, y, z, destination.getYaw(), destination.getPitch()));
 	}
 
 	private boolean blockIsAboveAir(World world, double x, double y, double z) {
