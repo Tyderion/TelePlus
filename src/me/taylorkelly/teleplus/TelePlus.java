@@ -1,5 +1,6 @@
 package me.taylorkelly.teleplus;
 import java.io.File;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
@@ -12,9 +13,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class TelePlus extends JavaPlugin {
 	private TPPlayerListener playerListener;
+
 	public static Logger log;
 	public final static String name = "TelePlus";
-	public final static String version = "1.1";
+	public final static String version = "1.3";
 	public TelePlus(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File plugin, ClassLoader cLoader) {
 		super(pluginLoader, instance, desc, plugin, cLoader);
 		// TODO Auto-generated constructor stub
@@ -28,8 +30,13 @@ public class TelePlus extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		playerListener = new TPPlayerListener(this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);	
+	    HashMap<String, Boolean> jtoggle = new HashMap<String, Boolean>();
+		playerListener = new TPPlayerListener(this, jtoggle);
+
+		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
+
+        //ARM SWING Hook
 		log = Logger.getLogger("Minecraft");
 		log.info(name + " " + version + " enabled");
 	}

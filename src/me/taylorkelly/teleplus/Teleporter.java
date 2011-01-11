@@ -3,6 +3,7 @@ package me.taylorkelly.teleplus;
 import java.util.ArrayList;
 
 import org.bukkit.*;
+import org.bukkit.craftbukkit.CraftWorld;
 
 public class Teleporter {
 	private Location destination;
@@ -22,9 +23,9 @@ public class Teleporter {
 		double z = destination.getZ();
 		if (y < 1)
 			y = 1;
-		// TODO Chunk loading stuffs
-		// if (!world.isChunkLoaded(world.getChunkAt(destination.getBlockX(), destination.getBlockZ())))
-		// 		world.loadChunk(world.getChunkAt(destination.getBlockX(), destination.getBlockZ()));
+		if(!((CraftWorld)world).getHandle().A.a(destination.getBlockX() >> 4, destination.getBlockZ() >> 4)) {	
+		    ((CraftWorld)world).getHandle().A.d(destination.getBlockX() >> 4, destination.getBlockZ() >> 4);
+		}
 
 		while (blockIsAboveAir(world, x, y, z)) {
 			y--;
@@ -44,8 +45,10 @@ public class Teleporter {
 					player.sendMessage("Teleporting you to (" + (int) x + ", " + (int) y + ", " + (int) z + ")");
 			}
 		}
-		for (Player player : players)
+		for (Player player : players) {
+			TeleHistory.pushLocation(player, player.getLocation());
 			player.teleportTo(new Location(world, x, y, z, destination.getYaw(), destination.getPitch()));
+		}
 	}
 
 	private boolean blockIsAboveAir(World world, double x, double y, double z) {
@@ -64,5 +67,11 @@ public class Teleporter {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+	}
+
+	public void addAll(Player[] playerList) {
+		for(Player player: playerList) {
+			addTeleportee(player);
+		}
 	}
 }
