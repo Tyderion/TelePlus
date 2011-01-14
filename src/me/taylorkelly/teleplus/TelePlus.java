@@ -13,10 +13,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class TelePlus extends JavaPlugin {
 	private TPPlayerListener playerListener;
-
 	public static Logger log;
-	public final static String name = "TelePlus";
-	public final static String version = "1.3";
+    public final String name = this.getDescription().getName();
+    public final String version = this.getDescription().getVersion();
 	public TelePlus(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File plugin, ClassLoader cLoader) {
 		super(pluginLoader, instance, desc, plugin, cLoader);
 		// TODO Auto-generated constructor stub

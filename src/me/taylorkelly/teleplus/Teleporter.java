@@ -23,6 +23,7 @@ public class Teleporter {
 		double z = destination.getZ();
 		if (y < 1)
 			y = 1;
+
 		if(!((CraftWorld)world).getHandle().A.a(destination.getBlockX() >> 4, destination.getBlockZ() >> 4)) {	
 		    ((CraftWorld)world).getHandle().A.d(destination.getBlockX() >> 4, destination.getBlockZ() >> 4);
 		}
@@ -52,7 +53,7 @@ public class Teleporter {
 	}
 
 	private boolean blockIsAboveAir(World world, double x, double y, double z) {
-		return (world.getBlockAt((int) Math.floor(x), (int) Math.floor(y - 1), (int) Math.floor(z)).getType() == Material.Air);
+		return (world.getBlockAt((int) Math.floor(x), (int) Math.floor(y - 1), (int) Math.floor(z)).getType() == Material.AIR);
 	}
 
 	public void addTeleportee(Player player) {
@@ -61,8 +62,8 @@ public class Teleporter {
 	}
 
 	public boolean blockIsSafe(World world, double x, double y, double z) {
-		return world.getBlockAt((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z)).getType() == Material.Air
-				&& world.getBlockAt((int) Math.floor(x), (int) Math.floor(y + 1), (int) Math.floor(z)).getType() == Material.Air;
+		return world.getBlockAt((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z)).getType() == Material.AIR
+				&& world.getBlockAt((int) Math.floor(x), (int) Math.floor(y + 1), (int) Math.floor(z)).getType() == Material.AIR;
 	}
 
 	public void setVerbose(boolean verbose) {

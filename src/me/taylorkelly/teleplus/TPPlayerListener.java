@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Block;
-import org.bukkit.Color;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Player;
 import org.bukkit.World;
@@ -26,11 +26,11 @@ public class TPPlayerListener extends PlayerListener {
     public void onPlayerItem(PlayerItemEvent event) {
         Player player = event.getPlayer();
         if (jtoggle.containsKey(player.getName()) && jtoggle.get(player.getName())) {
-            player.sendMessage(Color.GRAY + "quick jump.");
+            player.sendMessage(ChatColor.GRAY + "quick jump.");
             AimBlock aiming = new AimBlock(player);
             Block block = aiming.getTargetBlock();
             if (block == null) {
-                player.sendMessage(Color.RED + "Not pointing to valid block");
+                player.sendMessage(ChatColor.RED + "Not pointing to valid block");
             } else {
                 int x = block.getX();
                 int y = block.getY() + 1;
@@ -67,7 +67,7 @@ public class TPPlayerListener extends PlayerListener {
                  */
             } else if (split.length == 2 && isInteger(split[1])) {
                 if (!validWorld(Integer.parseInt(split[1]))) {
-                    player.sendMessage(Color.RED + "Not a valid world.");
+                    player.sendMessage(ChatColor.RED + "Not a valid world.");
                 } else {
                     World currentWorld = plugin.getServer().getWorlds()[Integer.parseInt(split[1])];
                     Location loc = new Location(currentWorld, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player
@@ -94,7 +94,7 @@ public class TPPlayerListener extends PlayerListener {
                 AimBlock aiming = new AimBlock(player);
                 Block block = aiming.getTargetBlock();
                 if (block == null) {
-                    player.sendMessage(Color.RED + "Not pointing to valid block");
+                    player.sendMessage(ChatColor.RED + "Not pointing to valid block");
                 } else {
                     int x = block.getX();
                     int y = block.getY() + 1;
@@ -112,7 +112,7 @@ public class TPPlayerListener extends PlayerListener {
             } else if (split.length == 2 && split[1].equalsIgnoreCase("back")) {
                 Location location = TeleHistory.popLocation(player);
                 if (location == null) {
-                    player.sendMessage(Color.RED + "No locations in your teleport history.");
+                    player.sendMessage(ChatColor.RED + "No locations in your teleport history.");
                 } else {
                     player.teleportTo(location);
                 }
@@ -122,10 +122,10 @@ public class TPPlayerListener extends PlayerListener {
             } else if (split.length == 2 && split[1].equalsIgnoreCase("qjump")) {
                 if (!jtoggle.containsKey(player.getName()) || !jtoggle.get(player.getName())) {
                     jtoggle.put(player.getName(), true);
-                    player.sendMessage(Color.AQUA + "Quick jump is on.");
+                    player.sendMessage(ChatColor.AQUA + "Quick jump is on.");
                 } else {
                     jtoggle.put(player.getName(), false);
-                    player.sendMessage(Color.AQUA + "Quick jump is off.");
+                    player.sendMessage(ChatColor.AQUA + "Quick jump is off.");
                 }
                 /**
                  * /tp <player>
@@ -141,14 +141,14 @@ public class TPPlayerListener extends PlayerListener {
                     tp.setVerbose(false);
                     tp.teleport();
                 } else {
-                    player.sendMessage(Color.RED + split[1] + " did not match a player, cancelling teleport");
+                    player.sendMessage(ChatColor.RED + split[1] + " did not match a player, cancelling teleport");
                 }
                 /**
                  * /tp <world> <x> <y> <z>
                  */
             } else if (split.length == 5 && isInteger(split[1]) && isNumber(split[2]) && isNumber(split[3]) && isNumber(split[4])) {
                 if (!validWorld(Integer.parseInt(split[1]))) {
-                    player.sendMessage(Color.RED + "Not a valid world.");
+                    player.sendMessage(ChatColor.RED + "Not a valid world.");
                 } else {
                     World currentWorld = plugin.getServer().getWorlds()[Integer.parseInt(split[1])];
                     Location loc = new Location(currentWorld, Double.parseDouble(split[2]), Double.parseDouble(split[3]), Double.parseDouble(split[4]), player
@@ -174,7 +174,7 @@ public class TPPlayerListener extends PlayerListener {
                             Player teleportee = targets.get(0);
                             tp.addTeleportee(teleportee);
                         } else {
-                            player.sendMessage(Color.RED + split[i] + " did not match a player");
+                            player.sendMessage(ChatColor.RED + split[i] + " did not match a player");
                         }
                     }
                 }
@@ -200,16 +200,16 @@ public class TPPlayerListener extends PlayerListener {
                                 Player teleportee = targets.get(0);
                                 tp.addTeleportee(teleportee);
                             } else {
-                                player.sendMessage(Color.RED + split[i] + " did not match a player");
+                                player.sendMessage(ChatColor.RED + split[i] + " did not match a player");
                             }
                         }
                     }
                     tp.teleport();
                 } else {
-                    player.sendMessage(Color.RED + split[2] + " did not match a player, cancelling teleport");
+                    player.sendMessage(ChatColor.RED + split[2] + " did not match a player, cancelling teleport");
                 }
             } else {
-                player.sendMessage(Color.RED + "Invalid /tp command");
+                player.sendMessage(ChatColor.RED + "Invalid /tp command");
             }
         }
     }
