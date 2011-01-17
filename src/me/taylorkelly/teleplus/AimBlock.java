@@ -3,6 +3,9 @@ package me.taylorkelly.teleplus;
 import java.util.ArrayList;
 
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class AimBlock {
 
@@ -224,7 +227,7 @@ public class AimBlock {
      */
     public Block getTargetBlock()
     {
-        while ((getNextBlock() != null) && ((getCurrentBlock().getTypeID() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeID())));
+        while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
         return getCurrentBlock();
     }
 
@@ -235,11 +238,11 @@ public class AimBlock {
      */
     public void setTargetBlock(int type)
     {
-    	while ((getNextBlock() != null) && ((getCurrentBlock().getTypeID() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeID())));
+    	while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
         if (getCurrentBlock() != null)
         {
         	Block blk = loc.getWorld().getBlockAt(targetPos.getBlockX(), targetPos.getBlockY(), targetPos.getBlockZ());
-        	blk.setTypeID(type);
+        	blk.setTypeId(type);
         }
     }
 
@@ -251,7 +254,7 @@ public class AimBlock {
      */
     public Block getFaceBlock()
     {
-    	while ((getNextBlock() != null) && ((getCurrentBlock().getTypeID() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeID())));
+    	while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
         if (getCurrentBlock() != null)
         {
             return getPreviousBlock();
@@ -272,7 +275,7 @@ public class AimBlock {
         if (getCurrentBlock() != null)
         {
         	Block blk = loc.getWorld().getBlockAt(prevPos.getBlockX(), prevPos.getBlockY(), prevPos.getBlockZ());
-        	blk.setTypeID(type);
+        	blk.setTypeId(type);
         }
     }
 
@@ -334,7 +337,7 @@ public class AimBlock {
     	Block blk = getCurrentBlock();
         if (blk != null)
         {
-        	blk.setTypeID(type); 
+        	blk.setTypeId(type); 
         }
     }
 
@@ -358,7 +361,7 @@ public class AimBlock {
     	Block blk = getPreviousBlock(); 
         if (blk != null)
         {
-            blk.setTypeID(type);
+            blk.setTypeId(type);
         }
     }
     

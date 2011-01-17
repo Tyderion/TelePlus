@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.*;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.Player;
 
 public class Teleporter {
 	private Location destination;
