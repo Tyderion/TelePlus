@@ -1,7 +1,7 @@
 name: TelePlus
-version: 1.5
+version: 1.5.2
 main: me.taylorkelly.teleplus.TelePlus
 commands:
   tp:
     description: All of the TelePlus commands
-    usage: /tp help
+    usage: /<command> help - Displays TelePlus help

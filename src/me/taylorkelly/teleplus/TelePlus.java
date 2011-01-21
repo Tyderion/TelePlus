@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -39,6 +40,7 @@ public class TelePlus extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        TPSettings.initialize(getDataFolder());
         jtoggle = new HashMap<String, Boolean>();
         playerListener = new TPPlayerListener(this, jtoggle);
 
@@ -49,17 +51,18 @@ public class TelePlus extends JavaPlugin {
         log.info(name + " " + version + " enabled");
     }
 
-    public void onCommand(Player player, String command, String[] args) {
+    public boolean onCommand(Player player, Command command, String commandLabel, String[] args) {
         String[] split = args;
-
+        String commandName = command.getName().toLowerCase();
+        
         // TODO permissions
-        if (split[0].equalsIgnoreCase("/tp")) {
+        if (commandName.equals("tp")) {
             /**
              * /tp <x> <y> <z>
              */
-            if (split.length == 4 && isNumber(split[1]) && isNumber(split[2]) && isNumber(split[3])) {
+            if (split.length == 3 && isNumber(split[0]) && isNumber(split[1]) && isNumber(split[2]) && TPPermissions.playerCanTP(player)) {
                 World currentWorld = player.getWorld();
-                Location loc = new Location(currentWorld, Double.parseDouble(split[1]), Double.parseDouble(split[2]), Double.parseDouble(split[3]), player
+                Location loc = new Location(currentWorld, Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]), player
                         .getLocation().getYaw(), player.getLocation().getPitch());
                 Teleporter tp = new Teleporter(loc);
                 tp.addTeleportee(player);
@@ -67,11 +70,11 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp <world>
                  */
-            } else if (split.length == 2 && isInteger(split[1])) {
-                if (!validWorld(Integer.parseInt(split[1]))) {
+            } else if (split.length == 1 && isInteger(split[0]) && TPPermissions.playerCanTP(player)) {
+                if (!validWorld(Integer.parseInt(split[0]))) {
                     player.sendMessage(ChatColor.RED + "Not a valid world.");
                 } else {
-                    World currentWorld = getServer().getWorlds()[Integer.parseInt(split[1])];
+                    World currentWorld = getServer().getWorlds()[Integer.parseInt(split[0])];
                     Location loc = new Location(currentWorld, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player
                             .getLocation().getYaw(), player.getLocation().getPitch());
                     Teleporter tp = new Teleporter(loc);
@@ -81,7 +84,7 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp up
                  */
-            } else if (split.length == 2 && split[1].equalsIgnoreCase("up")) {
+            } else if (split.length == 1 && split[0].equalsIgnoreCase("up") && TPPermissions.playerCanTP(player)) {
                 int y = player.getWorld().getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ());
                 Location loc = new Location(player.getWorld(), player.getLocation().getX(), y, player.getLocation().getZ(), player.getLocation().getYaw(),
                         player.getLocation().getPitch());
@@ -92,7 +95,7 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp jump
                  */
-            } else if (split.length == 2 && split[1].equalsIgnoreCase("jump")) {
+            } else if (split.length == 1 && split[0].equalsIgnoreCase("jump") && TPPermissions.playerCanJump(player)) {
                 AimBlock aiming = new AimBlock(player);
                 Block block = aiming.getTargetBlock();
                 if (block == null) {
@@ -111,7 +114,7 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp back
                  */
-            } else if (split.length == 2 && split[1].equalsIgnoreCase("back")) {
+            } else if (split.length == 1 && split[0].equalsIgnoreCase("back")) {
                 Location location = TeleHistory.popLocation(player);
                 if (location == null) {
                     player.sendMessage(ChatColor.RED + "No locations in your teleport history.");
@@ -121,7 +124,7 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp clear
                  */
-            } else if (split.length == 2 && split[1].equalsIgnoreCase("clear")) {
+            } else if (split.length == 1 && split[0].equalsIgnoreCase("clear")) {
                 if (TeleHistory.clearHistory(player)) {
                     player.sendMessage(ChatColor.AQUA + "Your history has been cleared");
                 } else {
@@ -130,7 +133,7 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp origin
                  */
-            } else if (split.length == 2 && split[1].equalsIgnoreCase("origin")) {
+            } else if (split.length == 1 && split[0].equalsIgnoreCase("origin")) {
                 Location location = TeleHistory.origin(player);
                 if (location == null) {
                     player.sendMessage(ChatColor.RED + "No locations in your teleport history.");
@@ -140,7 +143,7 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp qjump
                  */
-            } else if (split.length == 2 && split[1].equalsIgnoreCase("qjump")) {
+            } else if (split.length == 1 && split[0].equalsIgnoreCase("qjump") && TPPermissions.playerCanJump(player)) {
                 if (!jtoggle.containsKey(player.getName()) || !jtoggle.get(player.getName())) {
                     jtoggle.put(player.getName(), true);
                     player.sendMessage(ChatColor.AQUA + "Quick jump is on.");
@@ -151,7 +154,7 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp help
                  */
-            } else if (split.length == 2 && split[1].equalsIgnoreCase("help")) {
+            } else if (split.length == 1 && split[0].equalsIgnoreCase("help")) {
                 ArrayList<String> messages = new ArrayList<String>();
                 messages.add(ChatColor.RED + "-------------------- " + ChatColor.WHITE + "/TP HELP" + ChatColor.RED + " --------------------");
                 messages.add(ChatColor.RED + "/tp <player>" + ChatColor.WHITE + "  -  Teleport to " + ChatColor.GRAY + "<player>");
@@ -173,8 +176,8 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp <player>
                  */
-            } else if (split.length == 2) {
-                List<Player> targets = getServer().matchPlayer(split[1]);
+            } else if (split.length == 1 && TPPermissions.playerCanTPToOthers(player)) {
+                List<Player> targets = getServer().matchPlayer(split[0]);
                 if (targets.size() == 1) {
                     Player target = targets.get(0);
                     Location loc = new Location(target.getWorld(), target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ(),
@@ -189,12 +192,12 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp <world> <x> <y> <z>
                  */
-            } else if (split.length == 5 && isInteger(split[1]) && isNumber(split[2]) && isNumber(split[3]) && isNumber(split[4])) {
-                if (!validWorld(Integer.parseInt(split[1]))) {
+            } else if (split.length == 4 && isInteger(split[0]) && isNumber(split[1]) && isNumber(split[2]) && isNumber(split[3])  && TPPermissions.playerCanTP(player)) {
+                if (!validWorld(Integer.parseInt(split[0]))) {
                     player.sendMessage(ChatColor.RED + "Not a valid world.");
                 } else {
-                    World currentWorld = getServer().getWorlds()[Integer.parseInt(split[1])];
-                    Location loc = new Location(currentWorld, Double.parseDouble(split[2]), Double.parseDouble(split[3]), Double.parseDouble(split[4]), player
+                    World currentWorld = getServer().getWorlds()[Integer.parseInt(split[0])];
+                    Location loc = new Location(currentWorld, Double.parseDouble(split[1]), Double.parseDouble(split[2]), Double.parseDouble(split[3]), player
                             .getLocation().getYaw(), player.getLocation().getPitch());
                     Teleporter tp = new Teleporter(loc);
                     tp.addTeleportee(player);
@@ -203,15 +206,15 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp here <player1> <player2> <player3>
                  */
-            } else if (split.length > 2 && split[1].equalsIgnoreCase("here")) {
+            } else if (split.length > 1 && split[0].equalsIgnoreCase("here") && TPPermissions.playerCanTPOthers(player)) {
                 Location loc = new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player
                         .getLocation().getYaw(), player.getLocation().getPitch());
                 Teleporter tp = new Teleporter(loc);
                 tp.setVerbose(false);
-                if (split.length == 3 && split[1].equalsIgnoreCase("*")) {
+                if (split.length == 2 && split[1].equalsIgnoreCase("*")) {
                     tp.addAll(getServer().getOnlinePlayers());
                 } else {
-                    for (int i = 2; i < split.length; i++) {
+                    for (int i = 1; i < split.length; i++) {
                         List<Player> targets = getServer().matchPlayer(split[i]);
                         if (targets.size() == 1) {
                             Player teleportee = targets.get(0);
@@ -226,18 +229,18 @@ public class TelePlus extends JavaPlugin {
                 /**
                  * /tp to <target> <player1> <player2> ...
                  */
-            } else if (split.length > 3 && split[1].equalsIgnoreCase("to")) {
-                List<Player> targets = getServer().matchPlayer(split[2]);
+            } else if (split.length > 2 && split[0].equalsIgnoreCase("to") && TPPermissions.playerCanTPOthers(player) && TPPermissions.playerCanTPToOthers(player)) {
+                List<Player> targets = getServer().matchPlayer(split[1]);
                 if (targets.size() == 1) {
                     Player target = targets.get(0);
                     Location loc = new Location(target.getWorld(), target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ(),
                             target.getLocation().getYaw(), target.getLocation().getPitch());
                     Teleporter tp = new Teleporter(loc);
                     tp.setVerbose(false);
-                    if (split.length == 4 && split[1].equalsIgnoreCase("*")) {
+                    if (split.length == 3 && split[2].equalsIgnoreCase("*")) {
                         tp.addAll(getServer().getOnlinePlayers());
                     } else {
-                        for (int i = 3; i < split.length; i++) {
+                        for (int i = 2; i < split.length; i++) {
                             targets = getServer().matchPlayer(split[i]);
                             if (targets.size() == 1) {
                                 Player teleportee = targets.get(0);
@@ -252,9 +255,11 @@ public class TelePlus extends JavaPlugin {
                     player.sendMessage(ChatColor.RED + split[2] + " did not match a player, cancelling teleport");
                 }
             } else {
-                player.sendMessage(ChatColor.RED + "Invalid /tp command");
+               return false;
             }
+            return true;
         }
+        return false;
     }
 
     private boolean validWorld(int worldIndex) {
